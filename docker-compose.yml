@@ -2,10 +2,12 @@ version: '3'
 
 services:
   node:
-    image: node:lts-alpine3.14
+    build: ./docker/node
     volumes:
       - ./app:/app
-    working_dir: /app
+    ports:
+      - 8080:8080
+    tty: true
     networks:
       default:
   firebase:
@@ -16,14 +18,13 @@ services:
       - 4000:4000
       - 5001:5001
       - 9000:9000
-      - 8080:8080
+      - 8081:8081
       - 9199:9199
       - 5000:5000
       - 8085:8085
     volumes:
       - ./firebase:/firebase
-      - ./docker/firebase/emulators:/root/.cache/firebase/emulators/
-    working_dir: /firebase
+      - ./docker/firebase/emulators:/root/.cache/firebase/emulators
     networks:
       default:
 
