@@ -23,7 +23,12 @@ services:
       - 5000:5000
       - 8085:8085
     volumes:
-      - ./firebase:/firebase
+      - ./firebase/functions:/firebase/functions
+      - ./firebase/rules:/firebase/rules
+      - ./firebase/.firebaserc:/firebase/.firebaserc
+      - ./firebase/firebase.json:/firebase/firebase.json
+      - ./firebase/firestore.indexes.json:/firebase/firestore.indexes.json
+      - ./app/dist:/firebase/dist
       - ./docker/firebase/emulators:/root/.cache/firebase/emulators
     networks:
       default:
