@@ -1,6 +1,6 @@
 FROM node:lts-alpine3.14
 
-RUN npm install -g @vue/cli
+RUN npm install -g npm-check-updates @vue/cli
 
 WORKDIR /app
 

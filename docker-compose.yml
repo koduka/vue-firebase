@@ -30,6 +30,8 @@ services:
       - ./firebase/firestore.indexes.json:/firebase/firestore.indexes.json
       - ./app/dist:/firebase/dist
       - ./docker/firebase/emulators:/root/.cache/firebase/emulators
+    environment:
+      - FIREBASE_STORAGE_EMULATOR_HOST=0.0.0.0:9199
     networks:
       default:
 
