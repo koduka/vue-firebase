@@ -32,6 +32,7 @@ services:
       - ./docker/firebase/emulators:/root/.cache/firebase/emulators
     environment:
       - FIREBASE_STORAGE_EMULATOR_HOST=0.0.0.0:9199
+      - FIRESTORE_EMULATOR_HOST=0.0.0.0:8081
     networks:
       default:
 
