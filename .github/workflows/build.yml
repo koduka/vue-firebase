@@ -1,0 +1,34 @@
+# action.yml
+name: 'build'
+description: 'ソースコードをビルドし、アーカイブをアップロードする'
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
+      FIREBASE_AUTH_DOMAIN: ${{secrets.FIREBASE_AUTH_DOMAIN}}
+      FIREBASE_STORAGE_BUCKET: ${{secrets.FIREBASE_STORAGE_BUCKET}}
+      FIREBASE_DB_URL: ${{secrets.FIREBASE_DB_URL}}
+      FIREBASE_PROJECT_ID: ${{secrets.FIREBASE_PROJECT_ID}}
+      FIREBASE_MESSAGING_SENDER_ID: ${{secrets.FIREBASE_MESSAGING_SENDER_ID}}
+      FIREBASE_APP_ID: ${{secrets.FIREBASE_APP_ID}}
+      FIREBASE_MEASUREMENT_ID: ${{secrets.FIREBASE_MEASUREMENT_ID}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker Version
+        run: docker version
+      - name: Docker Compose Up
+        run: docker-compose -f docker-compose.production.yml up -d app functions
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: production_artifact
+          path: | 
+            ./app/dist
+            ./firebase/lib
+            ./firebase/rules
+            ./firebase/.firebaserc
+            ./firebase/firebase.json
+            ./firestore.indexes.json
+          retention-days: 5

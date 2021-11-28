@@ -1,0 +1,24 @@
+# action.yml
+name: 'deploy'
+description: 'ビルドコードをfirebaseにデプロイする'
+jobs:
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      - FIREBASE_TOKEN: ${{secrets.FIREBASE_TOKEN}}
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: firebase
+          path: firebase
+      - name: Docker Version
+        uses: actions/checkout@v2
+        run: docker version
+      - name: Docker Compose Up
+        run: |
+          ls -l
+          docker-compose -f docker-compose.production.yml up -d firebase
+          docker-compose -f docker-compose.production.yml exec -T firebase deploy
