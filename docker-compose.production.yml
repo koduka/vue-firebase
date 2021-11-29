@@ -1,40 +1,6 @@
 version: '3'
 
 services:
-  app:
-    image: node:lts-alpine3.14
-    command: npm run build
-    volumes:
-      - ./app:/target
-    environment:
-      - DEFAULT_STORAGE_BUKET_NAME=${DEFAULT_STORAGE_BUKET_NAME}
-      - NODE_ENV=${NODE_ENV}
-      - FIREBASE_AUTH_DOMAIN=${FIREBASE_AUTH_DOMAIN}
-      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}
-      - FIREBASE_DB_URL=${FIREBASE_DB_URL}
-      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
-      - FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}
-      - FIREBASE_APP_ID=${FIREBASE_APP_ID}
-      - FIREBASE_MEASUREMENT_ID=${FIREBASE_MEASUREMENT_ID}
-    networks:
-      default:
-  functions:
-    image: node:lts-alpine3.14
-    command: npm run build
-    volumes:
-      - ./firebase/functions:/target
-    environment:
-      - DEFAULT_STORAGE_BUKET_NAME=${DEFAULT_STORAGE_BUKET_NAME}
-      - NODE_ENV=${NODE_ENV}
-      - FIREBASE_AUTH_DOMAIN=${FIREBASE_AUTH_DOMAIN}
-      - FIREBASE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}
-      - FIREBASE_DB_URL=${FIREBASE_DB_URL}
-      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
-      - FIREBASE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}
-      - FIREBASE_APP_ID=${FIREBASE_APP_ID}
-      - FIREBASE_MEASUREMENT_ID=${FIREBASE_MEASUREMENT_ID}
-    networks:
-      default:
   firebase:
     build: ./docker/firebase
     volumes:
@@ -43,7 +9,7 @@ services:
       - ./firebase/.firebaserc:/firebase/.firebaserc
       - ./firebase/firebase.json:/firebase/firebase.json
       - ./firebase/firestore.indexes.json:/firebase/firestore.indexes.json
-      - ./app/dist:/firebase/dist
+      - ./app/dist:/firebase/public
     environment:
       - FIREBASE_TOKEN=${FIREBASE_TOKEN}
     networks:

@@ -1,0 +1,65 @@
+# TODO: バージョン内でクローズしたIssueからチェンジログまたはリリースノートを自動で生成するジョブを作成する
+# TODO: APPのバージョンの自動アップデートジョブを作成する
+# TODO: アーティファクト名にバージョンを入れるようにする
+
+name: 'release'
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build Job
+    runs-on: ubuntu-latest
+    env:
+      FIREBASE_AUTH_DOMAIN: ${{secrets.FIREBASE_AUTH_DOMAIN}}
+      FIREBASE_STORAGE_BUCKET: ${{secrets.FIREBASE_STORAGE_BUCKET}}
+      FIREBASE_DB_URL: ${{secrets.FIREBASE_DB_URL}}
+      FIREBASE_PROJECT_ID: ${{secrets.FIREBASE_PROJECT_ID}}
+      FIREBASE_MESSAGING_SENDER_ID: ${{secrets.FIREBASE_MESSAGING_SENDER_ID}}
+      FIREBASE_APP_ID: ${{secrets.FIREBASE_APP_ID}}
+      FIREBASE_MEASUREMENT_ID: ${{secrets.FIREBASE_MEASUREMENT_ID}}
+    steps:
+      - name: Check Out Code
+        uses: actions/checkout@v2
+      - name: Build App & Firebase Functions
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.3.0'
+      - run: | 
+          npm ci
+          npm run build
+        working-directory: ./app
+      - run: | 
+          npm ci
+          npm run build
+        working-directory: ./firebase/functions
+      - name: 'Upload artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: production_artifact
+          path: | 
+            ./app/dist
+            ./firebase/functions/lib
+            ./firebase/rules
+            ./firebase/.firebaserc
+            ./firebase/firebase.json
+            ./firestore.indexes.json
+          retention-days: 5
+  deploy:
+    name: Deploy Job
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      FIREBASE_TOKEN: ${{secrets.FIREBASE_TOKEN}}
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: production_artifact
+          path: firebase
+      - uses: actions/checkout@v2
+      - name: Docker Version
+        run: Docker Version
+      - name: Docker Compose Up
+        run: docker-compose -f docker-compose.production.yml run deploy --only hosting
